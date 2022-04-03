@@ -1,6 +1,6 @@
 <html>
 	<header>
-		<title>Admin Interface</title>
+		<title>Trailer Decoder-Encoder</title>
 		<style>
 			:root { --main: #2ea7b3; --secondary: #e5f7ff; --select: #d4e6ee; --background: ghostWhite }
 			* { font-family: roboto; }
@@ -50,6 +50,7 @@
 		</style>
 	</header>
 	<body>
+		
 
 <!---------------------------- ROW 1------------------------------------>
 		<table><tr><td>
@@ -64,8 +65,40 @@
 				</td></tr>
 			</table>
 			
-		</td><td colspan="2">
-			<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trailer Block Helper</h1>
+		</td><td>
+			
+			<h1>Trailer Block <br> Decoder-Encoder</h1>
+		
+		</td><td rowspan="2">
+
+			<table class="elem">
+				<tr><th>
+					Access Bytes Encoder
+				</th></tr>
+				<tr><td style="height: 430px;">
+					<div class="subtitle">Trailer Access Bits:</div>
+					<input oninput="encodehex()" type="number" name="inputtrailerbits" id="inputtrailerbits" placeholder="C1-C2-C3"></input>
+					<button onclick="decodebits(3)">Decode</button>
+					
+					<div class="subtitle">Data 1 Access Bits:</div>
+					<input oninput="encodehex()" type="number" name="inputdatabits1" id="inputdatabits1" placeholder="C1-C2-C3"></input>
+					<button onclick="decodebits(0)">Decode</button>
+					
+					<div class="subtitle">Data 2 Access Bits:</div>
+					<input oninput="encodehex()" type="number" name="inputdatabits2" id="inputdatabits2" placeholder="C1-C2-C3"></input>
+					<button onclick="decodebits(1)">Decode</button>
+					
+					<div class="subtitle">Data 3 Access Bits:</div>
+					<input oninput="encodehex()" type="number" name="inputdatabits3" id="inputdatabits3" placeholder="C1-C2-C3"></input>
+					<button onclick="decodebits(2)">Decode</button>
+					
+					<br><br><br><br><br>
+					<div class="subtitle">Result (HEX):</div>
+					<input name="outputbytesencoder" id="outputbytesencoder" placeholder="-- -- -- --" disabled></input>
+					
+				</td></tr>
+			</table>
+
 <!---------------------------- ROW 2------------------------------------>
 		</td></tr><tr><td>
 		
@@ -73,7 +106,7 @@
 				<tr><th>
 					Trailer Access Bits Generator
 				</th></tr>
-				<tr><td>
+				<tr><td style="height: 280px;">
 					<div class="subtitle">Key A (read-write):</div>
 					<input name="inputreadkeya" id="inputreadkeya" onclick="readkeya.showOptions()" placeholder="Read With.."></input>
 					<div class="search" id="optionsreadkeya"></div>
@@ -111,7 +144,7 @@
 				<tr><th>
 					Data Access Bits Generator
 				</th></tr>
-				<tr><td>
+				<tr><td style="height: 280px;">
 					<div class="subtitle">Data Block (read-write):</div>
 					<input name="inputreaddata" id="inputreaddata" onclick="readdata.showOptions()" placeholder="Read With.."></input>
 					<div class="search" id="optionsreaddata"></div>
@@ -126,9 +159,9 @@
 					
 					<input name="inputdecrementdata" id="inputdecrementdata" onclick="decrementdata.showOptions()" placeholder="Decrement With.."></input>
 					<div class="search" id="optionsdecrementdata"></div>
-					<br><br><br>
-					
 					<br>
+					
+					<br><br><br>
 					<div class="subtitle">Result (BIN):</div>
 					<input name="outputdatagenerator" id="outputdatagenerator" placeholder="C1-C2-C3" disabled></input>
 					
@@ -137,25 +170,7 @@
 			
 		</td><td>
 		
-			<table class="elem">
-				<tr><th>
-					Access Bytes Encoder
-				</th></tr>
-				<tr><td>
-					<div class="subtitle">Trailer Access Bits (read-write):</div>
-					<input oninput="encodehex()" type="number" name="inputtrailerbits" id="inputtrailerbits" placeholder="C1-C2-C3"></input>
-					
-					<br>
-					<div class="subtitle">Data Access Bits (read-write):</div>
-					<input oninput="encodehex()" type="number" name="inputdatabits" id="inputdatabits" placeholder="C1-C2-C3"></input>
-					<br><br><br>
-					
-					<br>
-					<div class="subtitle">Result (HEX):</div>
-					<input name="outputbytesencoder" id="outputbytesencoder" placeholder="-- -- -- --" disabled></input>
-					
-				</td></tr>
-			</table>
+
 			
 		</td></tr></table>
 		
@@ -179,7 +194,7 @@
 				"outputdatagenerator",
 				
 				"inputtrailerbits",
-				"inputdatabits",
+				"inputdatabits1","inputdatabits2","inputdatabits3",
 				"outputbytesencoder",
 				
 				"inputhex"
@@ -199,99 +214,153 @@
 		writedata = new InputAndOptionsData( ielements.inputwritedata, ielements.optionswritedata, ["Key A or B", "Never", "Key B"]);
 		incrementdata = new InputAndOptionsData( ielements.inputincrementdata, ielements.optionsincrementdata, ["Key A or B", "Never", "Key B"]);
 		decrementdata = new InputAndOptionsData( ielements.inputdecrementdata, ielements.optionsdecrementdata, ["Key A or B", "Never"]);
-	
-		setInterval(function(){
-			if(ielements.outputtrailergenerator.value.length < 3 || ielements.outputdatagenerator.value.length < 3)
-				return;
-			
-			//if(ielements.inputtrailerbits.value.length == 3 || ielements.inputdatabits.value.length == 3)
-			//	return;
-			
-			ielements.inputtrailerbits.value = ielements.outputtrailergenerator.value;
-			ielements.inputdatabits.value = ielements.outputdatagenerator.value;
-			encodehex();
-		}, 500);
 	}
 	
-	function decodehex(){
-		let inp = ielements.inputhex.value;
-		let c13 = ((parseInt(inp[2], 16) >> 3) & 0x01) ^ 0;
-		let c23 = ((parseInt(inp[0], 16) >> 3) & 0x01) ^ 1;
-		let c33 = ((parseInt(inp[4], 16) >> 3) & 0x01) ^ 0;
-		let traileraccess = c13.toString() + c23.toString() + c33.toString();
-		let config = InputAndOptionsTrailer.accesstable[traileraccess];
-		console.log( config );
+	function decodebits(block){
+		const DATA1=0,DATA2=1,DATA3=2,TRAILER=3;
+		let config = [];
 		
+		if(block == TRAILER){
+			config = InputAndOptionsTrailer.accesstable[ ielements.inputtrailerbits.value ];
+			printtrailer(config);
+			updateAccessResult(InputAndOptionsTrailer.updateInputsaccess(), InputAndOptionsTrailer.accesstable, ielements.outputtrailergenerator);
+		}
+		else{
+			switch(block){
+				case DATA1:
+					config = InputAndOptionsData.accesstable[ ielements.inputdatabits1.value ];
+				break;
+				case DATA2:
+					config = InputAndOptionsData.accesstable[ ielements.inputdatabits2.value ];
+				break;
+				case DATA3:
+					config = InputAndOptionsData.accesstable[ ielements.inputdatabits3.value ];
+				break;
+				default: break;
+			}
+			printdata(config);
+			updateAccessResult(InputAndOptionsData.updateInputsaccess(), InputAndOptionsData.accesstable, ielements.outputdatagenerator);
+		}
+	}
+	
+	function printtrailer(config){
 		ielements.inputreadkeya.value = config[0];
 		ielements.inputwritekeya.value = config[1];
 		ielements.inputreadaccess.value = config[2];
 		ielements.inputwriteaccess.value = config[3];
 		ielements.inputreadkeyb.value = config[4];
-		ielements.inputwritekeyb.value = config[5];		
-				
-		c13 = ((parseInt(inp[2], 16) >> 2) & 0x01) ^ 0;
-		c23 = ((parseInt(inp[0], 16) >> 2) & 0x01) ^ 1;
-		c33 = ((parseInt(inp[4], 16) >> 2) & 0x01) ^ 0;
-		traileraccess = c13.toString() + c23.toString() + c33.toString();
-		config = InputAndOptionsData.accesstable[traileraccess];
-		console.log( config );
-		
+		ielements.inputwritekeyb.value = config[5];	
+	}
+	
+	function printdata(config){
 		ielements.inputreaddata.value = config[0];
 		ielements.inputwritedata.value = config[1];
 		ielements.inputincrementdata.value = config[2];
 		ielements.inputdecrementdata.value = config[3];
+	}
+	
+	function decodehex(){
+		//Decoding definitions
+		let inp = ielements.inputhex.value;
+		const accesspattern = [2, 0, 4];
+		const blockpattern = [3, 2, 1, 0];
+		const invertpattern = [0, 1, 0];
+		const DATA1=0,DATA2=1,DATA3=2,TRAILER=3;
+		const DATA = [0,1,2];
+		let blocksaccess = [];
 		
+		//Decode
+		for( i in blockpattern){
+			let blockaccess = "";
+			for( j in accesspattern){
+				blockaccess += ((parseInt(inp[ accesspattern[j] ], 16) >> blockpattern[i]) & 0x01) ^ invertpattern[j];
+			}
+			blocksaccess[ blockpattern[i] ] = blockaccess;
+		}
+		
+		//Trailer Block. Show and save TRAILER
+		let config = InputAndOptionsTrailer.accesstable[ blocksaccess[TRAILER] ];
+		console.log(blocksaccess);
+		console.log(config);
+		printtrailer(config);
+		
+		ielements.inputtrailerbits.value = blocksaccess[TRAILER];
 		updateAccessResult(InputAndOptionsTrailer.updateInputsaccess(), InputAndOptionsTrailer.accesstable, ielements.outputtrailergenerator);
+				
+		//Data blocks
+		//Show DATA1 only. DATA1, DATA2 and DATA3 are saved in inputdatabitsX
+		config = InputAndOptionsData.accesstable[ blocksaccess[DATA1] ];
+		console.log( config );
+		printdata(config)
+		
+		ielements.inputdatabits1.value = blocksaccess[DATA1];
+		ielements.inputdatabits2.value = blocksaccess[DATA2];
+		ielements.inputdatabits3.value = blocksaccess[DATA3];
+		
 		updateAccessResult(InputAndOptionsData.updateInputsaccess(), InputAndOptionsData.accesstable, ielements.outputdatagenerator);
+	
+		encodehex();
 	}
 
 	function encodehex(){
-		trailerbits = ielements.inputtrailerbits.value;
-		databits = ielements.inputdatabits.value;
+		//Input Data Formating. HEX Strings to int array array
+		traileranddatabits = getTrailerAndDatabits();
+		if(!traileranddatabits) return;
+		console.log(traileranddatabits);
 		
-		if(trailerbits.length < 3 || databits.length < 3){	
-			ielements.outputbytesencoder.value = "-- -- -- --";
-			return;
-		}
-
-		console.log("trailerbits: " + trailerbits + "; databits:" + databits);
-
-		trailerbits = stringtobits( trailerbits );
-		databits = stringtobits( databits );
-		data3trailer1bits = [databits, databits, databits, trailerbits];
-		console.log(data3trailer1bits);
-		
-		accesspattern = [1,0,0,2,2,1];
-		blockspattern = [3,2,1,0];
-		invertpattern = [1, 1, 0, 1, 0, 0];
+		//Pattern definitions
+		const accesspattern = [1,0,0,2,2,1];
+		const blockspattern = [3,2,1,0];
+		const invertpattern = [1, 1, 0, 1, 0, 0];
 		const halfbyte = 4;
 		const totalhalfbytes = 6;
 		const lastbyte = "69";
-		let halfbytecounter = 0;
-		let bits = [];
+		let accessbytes = [];
 		
+		// Decode
 		for(let i=0; i<totalhalfbytes; i++){
-			let blockaccess = [];
+			let accessbits = [];
 			for(let j=0; j<halfbyte; j++){
-				let block = data3trailer1bits[ blockspattern[j] ];
-				blockaccess[j] = block[ accesspattern[i] ] ^ invertpattern[i];
+				//Weirdest line:
+				//	1. block is the current data or trailer block, in datasheet is decoded as [trailer, data3, data2, data1] = [[C1,C2,C3],[C1,C2,C3],[C1,C2,C3],[C1,C2,C3]]
+				//	2. The access bit [C1,C2,C3] of the block has a pattern: blockpattern
+				//	3. The encoding also has bit inversions of invertpattern. The XOR1 operation (^1) inverts the bit while XOR0 (^0) does nothing
+				let block = traileranddatabits[ blockspattern[j] ];
+				accessbits[j] = block[ accesspattern[i] ] ^ invertpattern[i];
 			}
-			
-			halfbytecounter++;
-			if(halfbytecounter => 2){
-				halfbytecounter = 0;
-				bits[i] = bitstohex( blockaccess );
-			}
+			accessbytes[i] = accessbits;
 		}
+		console.log("BITS: ",accessbytes);
 		
-		console.log("BITS: ",bits);
-		
+		//Output Data Formating. int array array to bit string
 		let result = '';
 		for(let i=0; i<totalhalfbytes; i++){
-			result += bits[i].toString();
+			result += bitstohex( accessbytes[i] ).toString();
 		}
 		
 		ielements.outputbytesencoder.value = result + lastbyte;
+	}
+	
+	function getTrailerAndDatabits(){
+		//Trailer block
+		trailerbits = stringtobits( ielements.inputtrailerbits.value );
+		if(trailerbits.length < 3){	
+			ielements.outputbytesencoder.value = "-- -- -- --";
+			return false;
+		}
+
+		//Data blocks
+		let databits = [ielements.inputdatabits1.value,
+						ielements.inputdatabits2.value,
+						ielements.inputdatabits3.value];
+		for(i in databits){
+			databits[i] = stringtobits( databits[i] );
+			if(databits[i].length < 3){
+				ielements.outputbytesencoder.value = "-- -- -- --";
+				return false;
+			}
+		}
+		return [databits[0], databits[1], databits[2], trailerbits];
 	}
 	
 	function stringtobits(string){
