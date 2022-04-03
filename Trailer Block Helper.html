@@ -1,0 +1,439 @@
+<html>
+	<header>
+		<title>Admin Interface</title>
+		<style>
+			:root { --main: #2ea7b3; --secondary: #e5f7ff; --select: #d4e6ee; --background: ghostWhite }
+			* { font-family: roboto; }
+			body { background-color: var(--background); text-align: -webkit-center;}
+			
+			th { background-color: var(--main); }
+			table, .search div, .search { padding: 2px; border-radius: 5px;}
+			table.elem:hover { background-color: var(--main); }
+			table.elem td { background-color: var(--secondary);}
+			
+			.subtitle {
+				color: var(--main);
+				font-weight: bolder;
+				font-size: small;
+			}
+			
+			button, input{
+				width: 120px;
+				margin: 5px 0px 5px 0px;
+				height: 40px;
+				display: inline-block;
+			}
+			
+			.search div:hover { background-color: var(--select); } 
+			.search div { cursor: pointer; } 
+			.search, table.elem td { border: solid var(--main) 1px; }
+			.search {
+				display: none;
+				background-color: var(--background);
+				min-height: 47px;
+				max-height: 162px;
+				position: absolute;
+				min-width: 240px;
+				box-shadow: 0 0 5px 0px var(--main);
+			}
+			
+			
+			#console, th { color: white; }
+			#console, td, tr, th { padding: 10px; border-radius: 5px;}
+			#console, .search { overflow-y: scroll; font-family: "Lucida Sans Typewriter"; }
+			#console {
+				width: 200px;
+				height: 430px;
+				overflow-y: scroll;
+				background-color: var(--main);
+			}
+		</style>
+	</header>
+	<body>
+
+<!---------------------------- ROW 1------------------------------------>
+		<table><tr><td>
+		
+			<table class="elem">
+				<tr><th>
+					Access Bytes Decoder
+				</th></tr>
+				<tr><td>
+					<input name="inputhex" id="inputhex" placeholder="Coded HEX"></input>
+					<button onclick="decodehex()">Decode HEX</button>
+				</td></tr>
+			</table>
+			
+		</td><td colspan="2">
+			<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trailer Block Helper</h1>
+<!---------------------------- ROW 2------------------------------------>
+		</td></tr><tr><td>
+		
+			<table class="elem">
+				<tr><th>
+					Trailer Access Bits Generator
+				</th></tr>
+				<tr><td>
+					<div class="subtitle">Key A (read-write):</div>
+					<input name="inputreadkeya" id="inputreadkeya" onclick="readkeya.showOptions()" placeholder="Read With.."></input>
+					<div class="search" id="optionsreadkeya"></div>
+					
+					<input name="inputwritekeya" id="inputwritekeya" onclick="writekeya.showOptions()" placeholder="Write With.."></input>
+					<div class="search" id="optionswritekeya"></div>
+					
+					<br>
+					<div class="subtitle">Access Bytes (read-write):</div>
+					<input name="inputreadaccess" id="inputreadaccess" onclick="readaccess.showOptions()" placeholder="Read With.."></input>
+					<div class="search" id="optionsreadaccess"></div>
+					
+					<input name="inputwriteaccess" id="inputwriteaccess" onclick="writeaccess.showOptions()" placeholder="Write With.."></input>
+					<div class="search" id="optionswriteaccess"></div>
+					
+					<br>
+					<div class="subtitle">Key B (read-write):</div>
+					<input name="inputreadkeyb" id="inputreadkeyb" onclick="readkeyb.showOptions()" placeholder="Read With.."></input>
+					<div class="search" id="optionsreadkeyb"></div>
+					
+					<input name="inputwritekeyb" id="inputwritekeyb" onclick="writekeyb.showOptions()" placeholder="Write With.."></input>
+					<div class="search" id="optionswritekeyb"></div>
+					
+					<br>
+					<div class="subtitle">Result (BIN):</div>
+					<input name="outputtrailergenerator" id="outputtrailergenerator" placeholder="C1-C2-C3" disabled></input>
+					
+										
+				</td></tr>
+			</table>
+
+		</td><td>
+		
+			<table class="elem">
+				<tr><th>
+					Data Access Bits Generator
+				</th></tr>
+				<tr><td>
+					<div class="subtitle">Data Block (read-write):</div>
+					<input name="inputreaddata" id="inputreaddata" onclick="readdata.showOptions()" placeholder="Read With.."></input>
+					<div class="search" id="optionsreaddata"></div>
+					
+					<input name="inputwritedata" id="inputwritedata" onclick="writedata.showOptions()" placeholder="Write With.."></input>
+					<div class="search" id="optionswritedata"></div>
+					
+					<br>
+					<div class="subtitle">For Value Card (increment-decrement):</div>
+					<input name="inputincrementdata" id="inputincrementdata" onclick="incrementdata.showOptions()" placeholder="Increment With.."></input>
+					<div class="search" id="optionsincrementdata"></div>
+					
+					<input name="inputdecrementdata" id="inputdecrementdata" onclick="decrementdata.showOptions()" placeholder="Decrement With.."></input>
+					<div class="search" id="optionsdecrementdata"></div>
+					<br><br><br>
+					
+					<br>
+					<div class="subtitle">Result (BIN):</div>
+					<input name="outputdatagenerator" id="outputdatagenerator" placeholder="C1-C2-C3" disabled></input>
+					
+				</td></tr>
+			</table>
+			
+		</td><td>
+		
+			<table class="elem">
+				<tr><th>
+					Access Bytes Encoder
+				</th></tr>
+				<tr><td>
+					<div class="subtitle">Trailer Access Bits (read-write):</div>
+					<input oninput="encodehex()" type="number" name="inputtrailerbits" id="inputtrailerbits" placeholder="C1-C2-C3"></input>
+					
+					<br>
+					<div class="subtitle">Data Access Bits (read-write):</div>
+					<input oninput="encodehex()" type="number" name="inputdatabits" id="inputdatabits" placeholder="C1-C2-C3"></input>
+					<br><br><br>
+					
+					<br>
+					<div class="subtitle">Result (HEX):</div>
+					<input name="outputbytesencoder" id="outputbytesencoder" placeholder="-- -- -- --" disabled></input>
+					
+				</td></tr>
+			</table>
+			
+		</td></tr></table>
+		
+	<body>
+	
+	<script>
+	
+	var ielements = {}
+	var inames = ["inputreadkeya","optionsreadkeya",
+				"inputwritekeya","optionswritekeya",
+				"inputreadaccess","optionsreadaccess",
+				"inputwriteaccess","optionswriteaccess",
+				"inputreadkeyb","optionsreadkeyb",
+				"inputwritekeyb","optionswritekeyb",
+				"outputtrailergenerator",
+				
+				"inputreaddata","optionsreaddata",
+				"inputwritedata","optionswritedata",
+				"inputincrementdata","optionsincrementdata",
+				"inputdecrementdata","optionsdecrementdata",
+				"outputdatagenerator",
+				
+				"inputtrailerbits",
+				"inputdatabits",
+				"outputbytesencoder",
+				
+				"inputhex"
+				];
+				
+	window.onload = function(){
+		for(let i in inames) ielements[inames[i]] = document.getElementById( inames[i] );
+		
+		readkeya = new InputAndOptionsTrailer( ielements.inputreadkeya, ielements.optionsreadkeya, ["Never"]);
+		writekeya = new InputAndOptionsTrailer( ielements.inputwritekeya, ielements.optionswritekeya, ["Key A", "Key B", "Never"]);
+		readaccess = new InputAndOptionsTrailer( ielements.inputreadaccess, ielements.optionsreadaccess, ["Key A", "Key A or B"]);
+		writeaccess = new InputAndOptionsTrailer( ielements.inputwriteaccess, ielements.optionswriteaccess, ["Never", "Key A", "Key B"]);
+		readkeyb = new InputAndOptionsTrailer( ielements.inputreadkeyb, ielements.optionsreadkeyb, ["Key A", "Never"]);
+		writekeyb = new InputAndOptionsTrailer( ielements.inputwritekeyb, ielements.optionswritekeyb, ["Key A", "Never", "Key B"]);
+		
+		readdata = new InputAndOptionsData( ielements.inputreaddata, ielements.optionsreaddata, ["Key A or B", "Key B", "Never"]);
+		writedata = new InputAndOptionsData( ielements.inputwritedata, ielements.optionswritedata, ["Key A or B", "Never", "Key B"]);
+		incrementdata = new InputAndOptionsData( ielements.inputincrementdata, ielements.optionsincrementdata, ["Key A or B", "Never", "Key B"]);
+		decrementdata = new InputAndOptionsData( ielements.inputdecrementdata, ielements.optionsdecrementdata, ["Key A or B", "Never"]);
+	
+		setInterval(function(){
+			if(ielements.outputtrailergenerator.value.length < 3 || ielements.outputdatagenerator.value.length < 3)
+				return;
+			
+			//if(ielements.inputtrailerbits.value.length == 3 || ielements.inputdatabits.value.length == 3)
+			//	return;
+			
+			ielements.inputtrailerbits.value = ielements.outputtrailergenerator.value;
+			ielements.inputdatabits.value = ielements.outputdatagenerator.value;
+			encodehex();
+		}, 500);
+	}
+	
+	function decodehex(){
+		let inp = ielements.inputhex.value;
+		let c13 = ((parseInt(inp[2], 16) >> 3) & 0x01) ^ 0;
+		let c23 = ((parseInt(inp[0], 16) >> 3) & 0x01) ^ 1;
+		let c33 = ((parseInt(inp[4], 16) >> 3) & 0x01) ^ 0;
+		let traileraccess = c13.toString() + c23.toString() + c33.toString();
+		let config = InputAndOptionsTrailer.accesstable[traileraccess];
+		console.log( config );
+		
+		ielements.inputreadkeya.value = config[0];
+		ielements.inputwritekeya.value = config[1];
+		ielements.inputreadaccess.value = config[2];
+		ielements.inputwriteaccess.value = config[3];
+		ielements.inputreadkeyb.value = config[4];
+		ielements.inputwritekeyb.value = config[5];		
+				
+		c13 = ((parseInt(inp[2], 16) >> 2) & 0x01) ^ 0;
+		c23 = ((parseInt(inp[0], 16) >> 2) & 0x01) ^ 1;
+		c33 = ((parseInt(inp[4], 16) >> 2) & 0x01) ^ 0;
+		traileraccess = c13.toString() + c23.toString() + c33.toString();
+		config = InputAndOptionsData.accesstable[traileraccess];
+		console.log( config );
+		
+		ielements.inputreaddata.value = config[0];
+		ielements.inputwritedata.value = config[1];
+		ielements.inputincrementdata.value = config[2];
+		ielements.inputdecrementdata.value = config[3];
+		
+		updateAccessResult(InputAndOptionsTrailer.updateInputsaccess(), InputAndOptionsTrailer.accesstable, ielements.outputtrailergenerator);
+		updateAccessResult(InputAndOptionsData.updateInputsaccess(), InputAndOptionsData.accesstable, ielements.outputdatagenerator);
+	}
+
+	function encodehex(){
+		trailerbits = ielements.inputtrailerbits.value;
+		databits = ielements.inputdatabits.value;
+		
+		if(trailerbits.length < 3 || databits.length < 3){	
+			ielements.outputbytesencoder.value = "-- -- -- --";
+			return;
+		}
+
+		console.log("trailerbits: " + trailerbits + "; databits:" + databits);
+
+		trailerbits = stringtobits( trailerbits );
+		databits = stringtobits( databits );
+		data3trailer1bits = [databits, databits, databits, trailerbits];
+		console.log(data3trailer1bits);
+		
+		accesspattern = [1,0,0,2,2,1];
+		blockspattern = [3,2,1,0];
+		invertpattern = [1, 1, 0, 1, 0, 0];
+		const halfbyte = 4;
+		const totalhalfbytes = 6;
+		const lastbyte = "69";
+		let halfbytecounter = 0;
+		let bits = [];
+		
+		for(let i=0; i<totalhalfbytes; i++){
+			let blockaccess = [];
+			for(let j=0; j<halfbyte; j++){
+				let block = data3trailer1bits[ blockspattern[j] ];
+				blockaccess[j] = block[ accesspattern[i] ] ^ invertpattern[i];
+			}
+			
+			halfbytecounter++;
+			if(halfbytecounter => 2){
+				halfbytecounter = 0;
+				bits[i] = bitstohex( blockaccess );
+			}
+		}
+		
+		console.log("BITS: ",bits);
+		
+		let result = '';
+		for(let i=0; i<totalhalfbytes; i++){
+			result += bits[i].toString();
+		}
+		
+		ielements.outputbytesencoder.value = result + lastbyte;
+	}
+	
+	function stringtobits(string){
+		let value=[];
+		for(let i in string){
+			value[i] = parseInt(string[i]);
+		}
+		return value;
+	}
+	
+	function bitstohex(bits){
+		let value=0;
+		for(let i in bits){
+			value = (value << 1) | bits[i];
+		}
+		return value.toString(16).toUpperCase();;
+	}
+
+	class InputAndOptionsTrailer{
+		constructor(input, options, elements){
+			this.input = input;
+			this.options = options;
+			this.elements = elements;
+			
+			generatePrintableOptions(input, options, elements);
+			generateAutoCloser(input, options,
+					InputAndOptionsTrailer.updateInputsaccess,
+					InputAndOptionsTrailer.accesstable,
+					ielements.outputtrailergenerator );
+		}
+		
+		static accesstable = {"000":	["Never","Key A","Key A","Never","Key A","Key A"],
+									 "010":	["Never","Never","Key A","Never","Key A","Never"],
+									 "100":	["Never","Key B","Key A or B","Never","Never","Key B"],
+									 "110":	["Never","Never","Key A or B","Never","Never","Never"],
+									 "001":	["Never","Key A","Key A","Key A","Key A","Key A"],
+									 "011":	["Never","Key B","Key A or B","Key B","Never","Key B"],
+									 "101":	["Never","Never","Key A or B","Key B","Never","Never"],
+									 "111":	["Never","Never","Key A or B","Never","Never","Never"]
+									};
+									
+		static updateInputsaccess = function(){
+			return [ielements.inputreadkeya.value,
+					ielements.inputwritekeya.value,
+					ielements.inputreadaccess.value,
+					ielements.inputwriteaccess.value,
+					ielements.inputreadkeyb.value,
+					ielements.inputwritekeyb.value
+				];
+		}
+		
+		showOptions = function(){
+			this.options.style.display = "block";
+		}
+	}
+	
+	class InputAndOptionsData{
+		constructor(input, options, elements){
+			this.input = input;
+			this.options = options;
+			this.elements = elements;
+			generatePrintableOptions(input, options, elements);
+			
+			generateAutoCloser(input, options,
+					InputAndOptionsData.updateInputsaccess,
+					InputAndOptionsData.accesstable,
+					ielements.outputdatagenerator );
+		}
+		
+		static accesstable   = 		{"000":	["Key A or B","Key A or B","Key A or B","Key A or B"],
+									 "010":	["Key A or B","Never","Never","Never"],
+									 "100":	["Key A or B","Key B","Never","Never"],
+									 "110":	["Key A or B","Key B","Key B","Key A or B"],
+									 "001":	["Key A or B","Never","Never","Key A or B"],
+									 "011":	["Key B","Key B","Never","Never"],
+									 "101":	["Key B","Never","Never","Never"],
+									 "111":	["Never","Never","Never","Never"]
+									};
+		static updateInputsaccess = function(){
+			return [
+					ielements.inputreaddata.value,
+					ielements.inputwritedata.value,
+					ielements.inputincrementdata.value,
+					ielements.inputdecrementdata.value,
+				];
+		}
+					
+		showOptions = function(){
+			this.options.style.display = "block";
+		}
+	}
+	
+	function updateAccessResult(inputaccess, resultsTable, ioutput){
+		let output = "";
+
+		let keys = Object.keys( resultsTable );
+		for(let i in keys){
+			let key = keys[i];
+			let values = Object.values( resultsTable )[i];
+			if( inputaccess[i] === "" ) break;
+			
+			console.log(key, values);
+			for(let j in values){
+				let input = inputaccess[j];
+				let value = values[j];
+				
+				console.log("j: "+j+"; key: " + key + "; input: " + input + "; value: " + value);
+				if( input != value ) break;
+				if(j >= values.length-1) {
+					output = key;
+					console.log("-- FOUND MATCH: "+key+" ---");
+				}
+			}
+		}
+		
+		ioutput.value = output;
+	}
+	
+	function generateAutoCloser(input, options, inputaccess, resultsTable, ioutput){
+		input.addEventListener("focusout", function(){
+			setTimeout(function(){
+				options.style.display = "none";
+				updateAccessResult(inputaccess(), resultsTable, ioutput);
+			}, 200);
+		});
+	}
+
+	function generatePrintableOptions(input, options, elements){
+		for(let i=0; i<elements.length; i++ ){
+			let row = elements[i];
+			let elem = document.createElement("div");
+			
+			elem.innerText = row;
+			options.appendChild(elem);
+			elem.addEventListener("click", function(){
+				input.value = elements[i];
+			} )
+		}
+	}
+
+	
+	
+		
+	</script>
+</html>
