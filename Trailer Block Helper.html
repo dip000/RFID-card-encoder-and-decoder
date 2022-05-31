@@ -174,6 +174,14 @@
 			
 		</td></tr></table>
 		
+		<h2><b>Decode</b> and <b>Encode</b> the access bytes of a <a href="https://www.amazon.com/s?k=rfid+card&ref=nav_bb_sb">RFID card</a></h2>
+		<p>The trailer block of a RFID card is where the configurations are. The access bytes are located at the seventh-to-tenth byte of the fourth block of any sector, as seen in the image below.</p>
+		<img src="https://raw.githubusercontent.com/dip000/RFID-card-encoder-and-decoder/main/RFID%20CARD%20Memalloc.png"></img>
+		
+		<p>You can reconfigure the access by changing the Access Bit Generators and then copy-paste the resulting bits in the Access Bit Encoder</p>
+		
+		<p>Note that not all combinations are possible, you can see the possible configurations in the datasheet found <a href="https://www.nxp.com/docs/en/data-sheet/MF1S50YYX_V1.pdf">HERE</a> in page 11 to 13</p>
+		<br><br>
 	<body>
 	
 	<script>
